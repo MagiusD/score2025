@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入應用程式</title>
+    <!-- 載入 Tailwind CSS 以進行快速且美觀的樣式設計 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Google Fonts 的 Inter 字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 使用 Noto Sans TC 作為主要字體以獲得更好的中文顯示效果 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        /* 為了更精準的玻璃擬態效果，使用自訂 class */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto">
+        <!-- 主要玻璃擬態訊息卡片 -->
+        <div class="glass-card rounded-2xl shadow-lg p-8 sm:p-10 text-center">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white mb-4 shadow-sm">
+                歡迎使用
+            </h1>
+            <p class="text-white/80 mb-8 text-base">
+                請選擇您的登入方式以繼續。
+            </p>
+            
+            <!-- 按鈕容器 -->
+            <div class="flex flex-col space-y-4">
+                <!-- 按鈕一：給有 Google 帳戶的使用者 -->
+                <a id="login-button-google" href="#" class="inline-block bg-white/90 text-blue-600 font-bold text-lg rounded-lg px-8 py-3 transition-transform transform hover:bg-white hover:scale-105 shadow-md">
+                    使用 Google 帳戶登入
+                </a>
+                
+                <!-- 按鈕二：給沒有 Google 帳戶的使用者 -->
+                <a id="login-button-no-account" href="#" class="inline-block bg-white/20 text-white font-semibold rounded-lg px-8 py-3 transition-colors hover:bg-white/30">
+                    直接繼續 (無帳戶)
+                </a>
+            </div>
+        </div>
+
+        <!-- 頁腳資訊 -->
+        <div class="mt-6 text-center text-xs text-white/60">
+            <p>
+                由 Google Apps Script 技術驅動
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- 設定區 ---
+        // ▼▼▼ 請將您自己的 Google Apps Script 網址貼在下方的引號之間 ▼▼▼
+        const appsScriptUrl = "https://script.google.com/macros/s/AKfycbxcL8MboMm4T1HHplVUD6M_8kvHY5Li0zeyU0PD_NmorORbe9Uh6y4cRnei4g3ZmoZw/exec";
+        // ▲▲▲ 請將您自己的 Google Apps Script 網址貼在上方的引號之間 ▲▲▲
+        // --- 設定區結束 ---
+
+        // 當頁面載入時，自動執行以下程式碼
+        document.addEventListener('DOMContentLoaded', function() {
+            // 找到頁面上的按鈕元素
+            const googleLoginButton = document.getElementById('login-button-google');
+            const noAccountLoginButton = document.getElementById('login-button-no-account');
+
+            // 檢查 URL 是否已設定
+            if (appsScriptUrl.includes("YOUR_APPS_SCRIPT_URL_HERE") || appsScriptUrl === "") {
+                // 如果使用者尚未替換 URL，給予提示
+                googleLoginButton.textContent = "請先設定 Apps Script 網址";
+                googleLoginButton.style.backgroundColor = '#f44336'; // 紅色
+                googleLoginButton.style.color = 'white';
+                googleLoginButton.style.cursor = 'not-allowed';
+                noAccountLoginButton.style.display = 'none'; // 隱藏第二個按鈕
+            } else {
+                // --- 設定 Google 帳戶登入按鈕 ---
+                // 1. 將 Apps Script 網址進行 URL 編碼
+                const encodedUrl = encodeURIComponent(appsScriptUrl);
+                // 2. 組合出 Google Account Chooser 網址
+                const accountChooserUrl = `https://accounts.google.com/AccountChooser?continue=${encodedUrl}`;
+                // 3. 將網址設定為按鈕的連結
+                googleLoginButton.href = accountChooserUrl;
+
+                // --- 設定無帳戶登入按鈕 ---
+                // 直接使用原始的 Apps Script 網址
+                noAccountLoginButton.href = appsScriptUrl;
+            }
+        });
+    </script>
+
+</body>
+</html>
