@@ -27,26 +27,27 @@
     <div class="w-full max-w-lg mx-auto">
         <!-- 主要玻璃擬態訊息卡片 -->
         <div class="glass-card rounded-2xl shadow-lg p-8 sm:p-10 text-white">
-            <h1 class="text-3xl font-bold text-center mb-4">
-                開啟流程說明
+            <h1 class="text-3xl font-bold text-center mb-6">
+                選擇開啟方式
             </h1>
-            <div class="text-left space-y-4 text-white/90">
-                <p>為了解決多個 Google 帳戶同時登入可能造成的衝突，我們將先為您登出所有 Google 帳戶。</p>
+            <div class="text-left space-y-6 text-white/90">
+                <!-- 選項一：強制登出流程 -->
                 <div class="bg-white/10 p-4 rounded-lg">
-                    <p class="font-semibold">點擊下方按鈕後，將會發生：</p>
-                    <ul class="list-decimal list-inside mt-2 space-y-1">
-                        <li>自動開啟「Google 登出」分頁，將您登出所有帳戶。</li>
-                        <li>自動開啟「評分系統」的新分頁。</li>
-                    </ul>
+                    <p class="font-semibold text-lg">已登入多個Google帳號</p>
+                    <p class="text-sm mt-1">如果您不確定瀏覽器登入狀態，或遇到錯誤，請使用此選項。它會先將您登出所有 Google 帳戶，再開啟系統。</p>
+                    <button id="start-logout-process" class="mt-4 w-full bg-white text-purple-600 font-bold text-base rounded-lg px-6 py-3 transition-transform transform hover:bg-gray-100 hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-white/50">
+                        登出並開啟系統
+                    </button>
                 </div>
-                <p>請在新的「評分系統」分頁中開始使用。如果頁面無法載入，請先確認登出分頁已顯示完成。</p>
-            </div>
-            
-            <!-- 按鈕會透過下方的 JavaScript 觸發 -->
-            <div class="mt-8 text-center">
-                <button id="start-process" class="w-full bg-white text-purple-600 font-bold text-lg rounded-lg px-8 py-4 transition-transform transform hover:bg-gray-100 hover:scale-105 shadow-xl focus:outline-none focus:ring-4 focus:ring-white/50">
-                    登出並開啟系統
-                </button>
+
+                <!-- 選項二：直接進入 -->
+                <div class="bg-white/10 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">直接進入評分系統</p>
+                    <p class="text-sm mt-1">如果您正在使用「無痕模式」，或已確認瀏覽器未登入任何 Google 帳戶，可使用此捷徑直接進入。</p>
+                    <a id="direct-entry-button" href="#" target="_blank" class="block text-center mt-4 w-full bg-white/20 text-white font-semibold text-base rounded-lg px-6 py-3 transition-colors hover:bg-white/30 shadow-md">
+                        直接進入評分系統
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -60,23 +61,32 @@
         // --- 設定區結束 ---
 
         document.addEventListener('DOMContentLoaded', function() {
-            const startButton = document.getElementById('start-process');
+            const logoutButton = document.getElementById('start-logout-process');
+            const directButton = document.getElementById('direct-entry-button');
             const logoutUrl = 'https://accounts.google.com/logout';
 
-            startButton.addEventListener('click', function() {
-                if (mainAppUrl.includes("請在此貼上")) {
-                    alert("系統設定不完整！請管理員先在中介頁面設定『主應用程式』的部署網址。");
-                    return;
-                }
+            // 檢查 URL 是否已設定
+            if (mainAppUrl.includes("請在此貼上")) {
+                alert("系統設定不完整！請管理員先在中介頁面設定『主應用程式』的部署網址。");
+                logoutButton.disabled = true;
+                directButton.style.pointerEvents = 'none';
+                directButton.style.opacity = '0.5';
+                return;
+            }
 
+            // 設定按鈕一（登出並開啟）的行為
+            logoutButton.addEventListener('click', function() {
                 // 1. 開啟登出分頁
                 window.open(logoutUrl, '_blank');
 
-                // 2. 稍微延遲後，開啟主應用程式分頁，給登出頁面一點反應時間
+                // 2. 稍微延遲後，開啟主應用程式分頁
                 setTimeout(function() {
                     window.open(mainAppUrl, '_blank');
                 }, 500); // 延遲 0.5 秒
             });
+
+            // 設定按鈕二（直接進入）的連結
+            directButton.href = mainAppUrl;
         });
     </script>
 
